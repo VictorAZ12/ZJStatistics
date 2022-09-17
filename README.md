@@ -22,9 +22,10 @@
 7. 歌曲长度(lenDance)：分为五列，表示成员该内容中演唱歌曲的总长度，以实际演唱长度为准，包括前奏和间奏，不包括未演唱部分。
 8. 舞蹈数量(nDance)：分为五列，表示成员该内容中表演舞蹈的数量。n连跳、舞蹈剧按不同舞蹈支数计。扒舞、舞力全开不计入。
 9. 舞蹈数量(lenDance)：分为五列，表示成员该内容中表演舞蹈的时长。以实际跳舞长度为准。
-10. 源(source)：创建该行时所使用的的源地址/链接
-11. 其他(other)：记录其他重要信息，或留下该行数据创建者的评论 
-12. 创建者(creator)：该行数据创建者的B站uid
+10. 源(source)：该内容首次发布使用的成员账号，从0到5分别表示官号、向晚、贝拉、珈乐、嘉然、乃琳。如某视频为六个账号联合投稿，则记为012345。
+11. 链接(link)：创建该行时所使用的的源地址/链接
+12. 其他(other)：记录其他重要信息，或留下该行数据创建者的评论 
+13. 创建者(creator)：该行数据创建者的B站uid
 csv header:  
 time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,nDanceB,lenDanceB,nSongC,lenSongC,nDanceC,lenDanceC,nSongD,lenSongD,nDanceD,lenDanceD,nSongE,lenSongE,nDanceE,lenDanceE,source,other
 单行示例数据：
@@ -33,3 +34,4 @@ time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,
 ### 数据发布
 ## 联系方式 Contact
 枝江数据统计-工作群 QQ群号：894542707
+枝江数据统计-闲聊群 QQ群号：744681407
