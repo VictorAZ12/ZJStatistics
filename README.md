@@ -12,7 +12,7 @@
 #### 数据存储：文件格式
 目前暂定使用csv文件存储数据，便于使用各种数据分析工具读取，如Python, R, Julia, Matlib。
 #### 数据收集：变量与类型
-目前暂定的需要收集的每一行有以下列：  
+stream_video.csv记录直播和视频数据，每一行有以下列：  
 1. 时间 (time)：格式为yyyy-mm-dd，如2022-01-01
 2. 标题(title): 该内容的标题。格式为：平台+日期+文字标题，若无标题存留则不写标题。例如：B站2022/01/31【原创音乐】《除夕》A-SOUL全新团曲MV【2022拜年纪单品】
 3. 类型 (type)：两位字符，平台加类型。平台位为b（bilibili），d（抖音），x（其他平台），类型位为s（直播），v（视频）
@@ -25,17 +25,15 @@
 10. 源(source)：该内容首次发布使用的成员账号，XABCDE分别表示官号、向晚、贝拉、珈乐、嘉然、乃琳。如某视频为六个账号联合投稿，则记为XABCDE。
 11. 链接(link)：创建该行时所使用的的源地址/链接
 12. 其他(other)：记录其他重要信息，或留下该行数据创建者的评论 
-13. 创建者(creator)：该行数据创建者的B站uid等数据，如uid:3510653
-csv header:  
-time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,nDanceB,lenDanceB,nSongC,lenSongC,nDanceC,lenDanceC,nSongD,lenSongD,nDanceD,lenDanceD,nSongE,lenSongE,nDanceE,lenDanceE,source,link,other,creator
-单行示例数据(附列名称）：
-       time title type length member nSongA lenSongA nDanceA lenDanceA nSongB lenSongB nDanceB  
- 2000-01-01  Test   xv 114514  XABCE      0        0       0         0      0        0       0  
- lenDanceB nSongC lenSongC nDanceC lenDanceC nSongD lenSongD nDanceD lenDanceD nSongE lenSongE  
-         0      0        0       0         0      0        0       0         0      0        0  
-  nDanceE lenDanceE source              link other     creator  
-        0         0  XABCE www.bilibili.com/       uid:3510653  
+13. 创建者(creator)：该行数据创建者的B站uid等数据，如uid:3510653  
 
+**csv header:**  
+time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,nDanceB,lenDanceB,nSongC,lenSongC,nDanceC,lenDanceC,nSongD,lenSongD,nDanceD,lenDanceD,nSongE,lenSongE,nDanceE,lenDanceE,source,link,other,creator  
+**单行示例数据(附列名称）：**  
+
+|time|title|type|length|member|nSongA|lenSongA|nDanceA|lenDanceA|nSongB|lenSongB|nDanceB|lenDanceB|nSongC|lenSongC|nDanceC|lenDanceC|nSongD|lenSongD|nDanceD|lenDanceD|nSongE|lenSongE|nDanceE|lenDanceE|source|link|other|creator|  
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|  
+|2000-01-01|Test|xv|114514|XABCE|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|XABCE|www.bilibili.com/||uid:3510653|  
 ### 数据分析与可视化 Data analysis and visualisation
 ### 数据发布
 ## 联系方式 Contact
