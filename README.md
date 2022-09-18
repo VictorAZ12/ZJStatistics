@@ -38,4 +38,7 @@ time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,
 ### 数据发布
 ## 联系方式 Contact
 枝江数据统计-工作群 QQ群号：894542707  
-枝江数据统计-闲聊群 QQ群号：744681407
+枝江数据统计-闲聊群 QQ群号：744681407  
+## 可能有用的一些链接
+[奶粉的录播站](https://rec.koifish.fans/)  
+
