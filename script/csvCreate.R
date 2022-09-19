@@ -20,6 +20,6 @@ df <- df %>% add_row(time="2000-01-01",
                      nSongE=0,lenSongE=0,nDanceE=0,lenDanceE=0,
                      source="XABCE",
                      link="www.bilibili.com/",
-                     other="",
+                     other="null",
                      creator='uid:3510653')
 write.csv(df,"./stream_video.csv", row.names = FALSE)
