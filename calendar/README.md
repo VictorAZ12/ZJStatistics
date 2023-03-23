@@ -8,4 +8,4 @@
 
 ## 可视化 Visualisation
 使用Notion建立日程表的calendar view。
-Link: [Notion Page](https://fluffy-textbook-181.notion.site/ZJStatistics-069881b2f5744c67a1508ba828400e44)
+Link: [Notion Page](https://fluffy-textbook-181.notion.site/7453eae579bc42f5af7b997956737863?v=043a75da608647b4a5fd3be681501e86)
