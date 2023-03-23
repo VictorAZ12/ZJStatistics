@@ -1,8 +1,9 @@
 # 直播日程表 Stream Calendar
 ## 数据处理 Data Processing
-### 动态分析 Analysis of bilibili dynamic posts
-对B站@A-SOUL_Offical已爬取的动态进行人工筛选，挑选出所有日程表相关的动态进行查看，将每场**实际进行了的**直播的日期、开播时间、下播时间、出场者（模型和中之人均在场）、所在直播间、直播平台等信息进行登记，最后存入CSV文件中。  
-
+### 直播预告 Stream Calendar
+对B站@A-SOUL_Offical已爬取的动态进行人工筛选，挑选出所有日程表相关的动态进行查看，存入Notion表格内
+### 直播 Stream
+由于技术不精，使用了一种朴素的方法：将[奶粉老师的录播站](https://alist.ddindexs.com/)上一周年、二周年的文件夹页面保存到本地，用正则从html文件里提取每个视频的名字来获取直播的日期和标题，最后结合直播预告动态进行人工校对。
 ### 时间戳转换 Time stamp conversion
 
 ## 可视化 Visualisation
