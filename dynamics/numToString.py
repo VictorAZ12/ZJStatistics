@@ -2,7 +2,7 @@
 import json
 
 # Example JSON array
-with open('test.json', 'r', encoding='UTF-8') as f:
+with open('result.json', 'r', encoding='UTF-8') as f:
 
     lines = f.readlines()
     data = lines[1:len(lines)-2]

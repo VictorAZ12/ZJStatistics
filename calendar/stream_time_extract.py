@@ -16,7 +16,7 @@ row_list = []
 # find all titles and extract rows
 for year in years:
     for i, title in enumerate(re.findall(pattern, year)):
-        row = [title[18:-5], title[7:17].replace('.','/')]
+        row = [title[18:-5].replace("&amp;", "&"), title[7:17].replace('.','/')]
         print(row)
         row_list.append(row)
 
