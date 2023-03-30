@@ -25,7 +25,7 @@
 提取日期和标题的输出：calendar.csv
 ## 可视化 Visualisation
 使用Notion建立日程表的calendar view。
-Link: [Notion Page](https://fluffy-textbook-181.notion.site/7453eae579bc42f5af7b997956737863?v=043a75da608647b4a5fd3be681501e86)
+Link: [Notion Page](https://fluffy-textbook-181.notion.site/077eec31ced54ec2a7022012e3ac0b97?v=ba959398b70f48a7b3169e014bac6f8a)
 ### 数据校对(最小化)（510前） Validation（minimal）（pre-510）
 结合动态和实际情况进行筛选与矫正
 - 删除 和嘉然一起画画吧 前15分钟 2020/12/20: 重复
