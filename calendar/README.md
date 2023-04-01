@@ -23,10 +23,14 @@
 使用了一种朴素的方法：将[奶粉老师的录播站](https://alist.ddindexs.com/)上一周年、二周年的文件夹页面保存到本地（anni1.html, anni2.html），用正则从html文件里提取每个视频的名字来获取直播的日期和标题，最后结合直播预告动态进行人工校对。  
 提取日期和标题的代码：stream_time_extract.py。对日期进行了一些处理，使之能够直接导入Notion中作为"Date"一栏被识别。  
 提取日期和标题的输出：calendar.csv
-## 可视化 Visualisation
+### 可视化 Visualisation
 使用Notion建立日程表的calendar view。
-Link: [Notion Page](https://fluffy-textbook-181.notion.site/077eec31ced54ec2a7022012e3ac0b97?v=ba959398b70f48a7b3169e014bac6f8a)
-### 数据校对(最小化)（510前） Validation（minimal）（pre-510）
+Link: [Notion Page](https://fluffy-textbook-181.notion.site/077eec31ced54ec2a7022012e3ac0b97?v=1cb16d4e284e46158d7c45b32c50ff96)
+
+----------
+## 直播日历数据(510前)
+
+### 1. 数据校对(最小化)（510前） Validation（minimal）（pre-510）
 结合动态和实际情况进行筛选与矫正
 - 删除 和嘉然一起画画吧 前15分钟 2020/12/20: 重复
 - 删除 珈乐 军训片段+番外的合集 2021/01/06: 非公开直播
@@ -41,14 +45,20 @@ Link: [Notion Page](https://fluffy-textbook-181.notion.site/077eec31ced54ec2a702
 - 删除 贝拉 抖音大V连线时刻 弹幕版 手机录屏 重复
 - 删除 七夕特别直播 弹幕版 手机录屏 重复
 - 删除 抖音奇妙夜 赤伶 播片
-- 删除 集光之夜 《传说的世界》 播片
+- 删除 集光之夜 《传说的世界》 播片 2022/01/28
 - 删除 测试直播 2021/03/10 只有阿草在扭😡
 - 删除 测试直播 2021/08/23 只有阿草在扭🥵
 - 删除 测试直播 2021/10/18 只有阿草在扭🤣
 - 删除 测试直播 2021/11/08 只有阿草在扭🤤
+- 删除 珈乐 嘉然 百大盛典 2022/01/21 播片
+- 删除 羊驼 军训工具人 2022/04/11 只有阿草在扭😍
+- 删除 羊驼 测试直播 2022/04/11 只有阿草在扭🎤
+
 以上为510前调整内容, 510之后太多，以后有空再整理
-### 出场成员（最小化） Membmer（minimal）
+### 2. 出场成员（最小化） Membmer（minimal）
 通过查看录播确定有谁出场，新开Member一列存储出场人。以最小化原则使用Notion进行登记。  
 方法：通过查看录播的开场、中间、结尾的任意5个时间点确定在场人数  
 使用录播源：奶粉老师的录播站，[ASOUL全集 第一季](https://www.bilibili.com/video/BV12U4y1j7fY)
 误差：若成员不出现在所有采样的帧内，则无法被统计到
+### 3. 数据发布 Data Publishing
+使用notion进行数据导出，保存在本文件夹的calendar_minimal_members_to510.csv文件内
