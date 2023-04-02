@@ -1,0 +1,93 @@
+---
+title: "对A-SOUL510前直播次数的分析"
+output: html_notebook
+author: 顶碗人在这里
+---
+
+<style type="text/css">
+/* First-level headers */
+h1 {
+  font-weight: bold;
+  font-size: 32px;
+  color: #1C3144;
+}
+
+/* Second-level headers */
+h2 {
+  font-weight: bold;
+  font-size: 24px;
+  color: #204060;
+}
+
+/* Third-level headers */
+h3 {
+  font-weight: bold;
+  font-size: 18px;
+  color: #2B547E;
+}
+
+/* Fourth-level headers */
+h4 {
+  font-weight: bold;
+  font-size: 16px;
+  color: #376996;
+}
+
+/* Fifth-level headers */
+h5 {
+  font-size: 14px;
+  color: #3D8EB9;
+}
+
+/* Sixth-level headers */
+h6 {
+  font-size: 12px;
+  color: #81B7D3;
+}
+</style>
+# 0. 准备工作
+## 数据导入与预处理
+从csv文件读入数据，存入一data frame内。
+```{r}
+# Clear environment
+rm(list = ls())
+# Set working directory
+directory <- "D:/A-SOUL/ZJStatistics/ZJStatistics/calendar/"
+fileName <- "calendar_minimal_members_to510.csv"
+# Import data
+data <- read.csv(file = paste(directory, fileName, sep=''), header = TRUE, sep = ",", quote = "\"")
+```
+将Date一列转为R的日期格式
+```{r}
+data$Date <- as.Date(data$Date, format = '%Y/%m/%d')
+```
+添加新的一列Number，以方便查询某次直播出场了多少成员。  
+4*成员数
+```{r}
+data <- within(data, {
+  Number <- (nchar(Member) + 2) %/% 4
+})
+```
+
+# 数据分析
+## 导入所需包
+```{r}
+library(ggplot2)
+```
+## 包含特定成员的直播
+将包含特定成员的行保存待用(Boolean vector)，可通过逻辑运算得出对应的行。如嘉晚饭双播的行可用data[Ava&Diana&!Bella&!Carol&!Eileen,]得到，而珈乐乃琳贝拉均在场的直播可用data[Carol&Eileen&Bella,]得到
+```{r}
+Ava <- grepl("向晚", data$Member)
+Bella <- grepl("贝拉", data$Member)
+Carol <- grepl("珈乐", data$Member)
+Diana <- grepl("嘉然", data$Member)
+Eileen <- grepl("乃琳", data$Member)
+```
+
+# 1. 直播次数-时间分析
+## 总直播次数 按成员分析
+```{r}
+
+```
+
+
