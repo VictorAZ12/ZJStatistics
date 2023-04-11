@@ -1,4 +1,4 @@
-# Analysis1: 对A-SOUL510前直播次数的分析
+# Analysis1: 对A-SOUL510前直播的分析
 数据源：../calendar_minimal_members_to510.csv  
 使用工具：RStudio  
 发布：RStudio生成的R Notebook（html）  
@@ -21,3 +21,6 @@
 以成员参与过的直播次数为单位计数，以月为单位汇总，绘制成直播次数对时间、按成员分组的折线图
 使用图表类型：geom_point, geom_line
 ## 2. 直播类型分析
+
+## To-do list:
+accumulative stream length, video counts, income, video length, video count
