@@ -7,7 +7,11 @@ B站直播的开始时间、结束时间、营收数据来源：https://danmakus
 2020-12-12 嘉然首播 数据缺失  
 2020-12-11 全团首播 数据缺失  
 2022-03-16 乃琳 掉凳师傅乃琳 营收数据缺失 采用[matsuri.icu上的数据](https://matsuri.icu/detail/gZLDlVWSYwABgAXo)  
-A-SOUL小剧场 第五十一期 A-SOUL劝学大会 因danmakus上数据有丢失，营收采用[matsuri.icu上的数据](https://matsuri.icu/detail/D19Zm7KcOJ0Az4pK)
+A-SOUL小剧场 第五十一期 A-SOUL劝学大会 因danmakus上数据有丢失，营收采用[matsuri.icu上的数据](https://matsuri.icu/detail/D19Zm7KcOJ0Az4pK)  
+
+~~已知问题：danmakus的数据与matsuri.icu不符，需要进行交叉对比：如果相差超过10%则采用相对较多的一个数值  ~~  
+营收数据替换为matrsuri.icu的，danmakus数据疑似存在多处缺失和漏算  
+
 
 
 
