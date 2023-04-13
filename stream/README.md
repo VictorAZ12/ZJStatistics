@@ -30,7 +30,8 @@ A-SOUL小剧场 三十七期 今天你说了算！！！	2021/11/20	乃琳, 向�
 贝拉 哭哭~深度解密《纸嫁衣》~	2022/02/17	贝拉 直播开始和结束的时间数据采用[奶粉录播站中的xml文件](https://alist.ddindexs.com/d/A-SOUL/ASOUL-REC-%E4%BA%8C%E5%91%A8%E5%B9%B4/XML%E5%BC%B9%E5%B9%95%E6%96%87%E4%BB%B6/2022.02.17%20%E8%B4%9D%E6%8B%89%20%E5%93%AD%E5%93%AD~%E6%B7%B1%E5%BA%A6%E8%A7%A3%E5%AF%86%E3%80%8A%E7%BA%B8%E5%AB%81%E8%A1%A3%E3%80%8B~.xml)，营收数据使用[A-SOUL数据组的专栏数据](https://www.bilibili.com/read/cv15311324)  
 贝拉 乃琳 双人成行 单人不行	2022/03/23	乃琳, 贝拉 danmakus上数据丢失，采用[matsuri.icu上的数据](https://matsuri.icu/detail/5Q9wOEoHWpWxNk2G)  
 奇妙女孩的知识茶话会	2022/04/21	贝拉 为抖音直播，暂无数据  
-A-SOUL夜谈 二十五期 假期的那些事	2021/10/06	乃琳, 向晚, 嘉然, 珈乐, 贝拉 danmakus上统计少了，采用[matsuri.icu上的数据](https://matsuri.icu/detail/vgQGBknhyyyL7m2G)
+A-SOUL夜谈 二十五期 假期的那些事	2021/10/06	乃琳, 向晚, 嘉然, 珈乐, 贝拉 danmakus上统计少了，采用[matsuri.icu上的数据](https://matsuri.icu/detail/vgQGBknhyyyL7m2G)  
+贝拉50万纪念回	2022/02/26	乃琳, 向晚, 嘉然, 珈乐, 贝拉 danmakus上结束时间不合理(2022-02-27 13:28:22)，采用[奶粉录播站中弹幕xml](https://alist.ddindexs.com/d/A-SOUL/ASOUL-REC-%E4%BA%8C%E5%91%A8%E5%B9%B4/XML%E5%BC%B9%E5%B9%95%E6%96%87%E4%BB%B6/2022.02.26%20%E8%B4%9D%E6%8B%8950%E4%B8%87%E7%BA%AA%E5%BF%B5%E5%9B%9E.xml)中最后一条弹幕的相对时间计算出结束时间  
 ## 营收数据替换（未完成）
 已知问题：danmakus的营收数据与matsuri.icu上的营收数据存在较大差异。目前绝大部分营收数据均来自damakus，少数较为明显的错误、缺失的部分按照matsuri.icu（相对齐全） -> A-SOUL数据组（仅在前二者数据缺失时使用）上的数字填写.  
 
