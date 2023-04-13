@@ -51,6 +51,7 @@ h6 {
 library(ggplot2)
 library(tidyverse)
 library(lubridate)
+library(ggrepel)
 ```
 ## 数据导入
 从csv文件读入数据，存入一data frame内
@@ -71,12 +72,263 @@ summary(data)
 data = na.omit(data)
 ```
 ## 数据格式处理
-将包含有日期与时间的一列转为POSIXct格式
+将包含有日期与时间的一列转为POSIXct格式，并按照开播时间排序
 ```{r}
 data$Date <- parse_date_time2(data$Date, "Ymd", tz="PRC")
 data$StartTime <- parse_date_time2(data$StartTime, "Ymd HMS", tz="PRC")
 data$EndTime <- parse_date_time2(data$EndTime, "Ymd HMS", tz="PRC")
+data <- data[order(as.POSIXct(data$StartTime)),]
+```
+## 直播时长计算
+直播时长可由结束时间减开始时间获得，存入Duration这一列中
+```{r}
+Duration <- difftime(data$EndTime, data$StartTime, units = "secs")
+data <- cbind(data, Duration)
+```
+## 直播人数计算
+直播人数可由Member的长度获得，存入Member_num这一列中
+```{r}
+Member_num <- (nchar(data$Member)+2)/4
+data <- cbind(data, Member_num)
 ```
 
+## 包含特定成员的直播
+将包含特定成员的行保存待用(Boolean vector)，可通过逻辑运算得出对应的行。如嘉晚饭双播的行可用data[Ava&Diana&!Bella&!Carol&!Eileen,]得到，而珈乐乃琳贝拉均在场的直播可用data[Carol&Eileen&Bella,]得到
+```{r}
+Ava <- grepl("向晚", data$Member)
+Bella <- grepl("贝拉", data$Member)
+Carol <- grepl("珈乐", data$Member)
+Diana <- grepl("嘉然", data$Member)
+Eileen <- grepl("乃琳", data$Member)
+```
 
+# 1. 数据分析
+## 1.1 成员组合直播次数分析
+出现的成员组合：
+```{r}
+# 找到独特的组合，按照组合长度排序
+member_combo <- unique(data$Member)
+member_combo <- member_combo[order(nchar(member_combo), member_combo, decreasing = TRUE)]
+print(member_combo)
+print(paste0("总共有", length(member_combo), "种成员组合"))
+```
+总共有28种不同的成员直播组合。经查验，从未出现的3种直播成员组合为："乃琳,珈乐,贝拉"(大三角), "向晚,珈乐,贝拉", "乃琳,向晚,珈乐,贝拉"。
+
+### 1.1.1 全部组合直播次数分析
+对组合直播次数进行分析，此图表中单人名字为单人单播。
+```{r}
+# Create a summary data frame with the count of rows for each unique value in the 'Member' column
+member_summary <- data.frame(table(data$Member))
+member_summary$Var1 <- factor(member_summary$Var1, levels=member_summary$Var1[order(member_summary$Freq, decreasing=FALSE)])
+# Create the bar chart using ggplot2
+ggplot(member_summary, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity") +
+  ggtitle("全部成员(组合)直播次数") +
+  xlab("成员(组合)") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+排序后可以看出：直播次数最多的组合是五人团播（91次),占绝对多数。第二梯队是五位成员的各自单播，次数大约是五人团播次数的一半。然后是四人团播，占五位成员单播的一半左右。剩下的大致小于等于四人团播次数的一半。
+### 1.1.2 不同人数组合次数分析
+统计不同人数组合的次数，即五人团播、四人团播、三人团播、双播和单播。
+```{r}
+member_number_summary <- data.frame(table(data$Member_num))
+member_number_summary$Var1 <- factor(member_number_summary$Var1, levels=member_number_summary$Var1[order(member_number_summary$Freq, decreasing=FALSE)])
+
+ggplot(member_number_summary, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", width=0.5) +
+  ggtitle("成员组合（不同人数）直播次数") +
+  xlab("成员人数") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+根据上图，单播的总次数为239次，占绝对多数。其次是五人团播，有91次。双播、四人团播和三人团播分别是39、30、30次。
+### 1.1.3 四人团播次数分析
+对四人团播组合的直播次数进行分析：
+```{r}
+member_number_summary4 <- data.frame(table(data$Member[data$Member_num==4]))
+member_number_summary4$Var1 <- factor(member_number_summary4$Var1, levels=member_number_summary4$Var1[order(member_number_summary4$Freq, decreasing=FALSE)])
+
+ggplot(member_number_summary4, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", width=0.5) +
+  ggtitle("四人团播直播次数") +
+  xlab("组合") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+经查验，在四人团播中，缺少珈乐的四人直播为21次，占绝对多数。缺少向晚、乃琳、贝拉的四人团播次数分别为4、3、2次。
+### 1.1.4 三人团播次数分析
+对三人团播组合的直播次数进行分析：
+```{r}
+member_number_summary3 <- data.frame(table(data$Member[data$Member_num==3]))
+member_number_summary3$Var1 <- factor(member_number_summary3$Var1, levels=member_number_summary3$Var1[order(member_number_summary3$Freq, decreasing=FALSE)])
+
+ggplot(member_number_summary3, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", width=0.5) +
+  ggtitle("三人团播直播次数") +
+  xlab("组合") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+三人团播中，"乃琳,向晚,嘉然"的组合直播次数最多（10次），其余见图.
+### 1.1.5 双播次数分析
+对双播组合的直播次数进行分析：
+```{r}
+member_number_summary2 <- data.frame(table(data$Member[data$Member_num==2]))
+member_number_summary2$Var1 <- factor(member_number_summary2$Var1, levels=member_number_summary2$Var1[order(member_number_summary2$Freq, decreasing=FALSE)])
+
+ggplot(member_number_summary2, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", width=0.7) +
+  ggtitle("双播直播次数") +
+  xlab("组合") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+双播次数前三为嘉晚饭(11)、乃贝(8)和果丹皮(7)。自第四师徒组(3)/琳嘉(3)的组合均不及第三果丹皮直播次数的一半。
+### 1.1.6 单播次数分析
+对单播的直播次数进行分析：
+```{r}
+member_number_summary1 <- data.frame(table(data$Member[data$Member_num==1]))
+member_number_summary1$Var1 <- factor(member_number_summary1$Var1, levels=member_number_summary1$Var1[order(member_number_summary1$Freq, decreasing=FALSE)])
+
+ggplot(member_number_summary1, aes(x=Var1, y=Freq)) +
+  geom_bar(stat="identity", width=0.5) +
+  ggtitle("单播直播次数") +
+  xlab("成员") +
+  ylab("直播次数") +
+  geom_text(aes(label=Freq), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+五人单播中，嘉然的直播次数最多（52次），其次是贝拉、乃琳、向晚和珈乐。
+### 1.1.7 参与直播次数分析
+如某成员出现在某次直播的Member内，则视为参与了此次直播。参与的直播次数为：
+```{r}
+member_participate <- c(table(Ava)["TRUE"], table(Bella)["TRUE"], table(Carol)["TRUE"], table(Diana)["TRUE"], table(Eileen)["TRUE"])
+member_participate <- data.frame(member_participate, c("向晚", "贝拉", "珈乐", "嘉然","乃琳"))
+colnames(member_participate) <- c("Participate_Count", "Member")
+# sort by count
+member_participate$Member <- factor(member_participate$Member,
+                                               levels = member_participate$Member[order(member_participate$Participate_Count, decreasing = FALSE)])
+ggplot(member_participate, aes(x=Member, y=Participate_Count)) +
+  geom_bar(stat="identity", width=0.5) +
+  ggtitle("参与直播次数") +
+  xlab("成员") +
+  ylab("参与直播次数") +
+  geom_text(aes(label=Participate_Count), vjust=0.2, hjust = 0, color="red", size=3) + 
+  coord_flip()
+```
+五位成员参与直播的次数由多到少为嘉然、向晚、乃琳、贝拉、珈乐，其中珈乐参与直播次数与其他成员相差较大。
+## 1.1.8 直播次数对时间的分析
+以直播开始时所在日期记为直播所在日，总直播次数对时间（周）的折线图如下：
+```{r}
+# Create a new column 'week' that groups the dates by week
+data$Week <- cut(data$Date, breaks = "week")
+
+# Create a summary data frame with the count of rows for each week
+week_summary <- data.frame(table(data$Week))
+
+# Create the line chart using ggplot2
+ggplot(week_summary, aes(x=Var1, y=Freq, group=1)) +
+  geom_line() +
+  ggtitle("直播次数/周折线图") +
+  xlab("周一日期") +
+  ylab("直播次数")+
+  geom_text_repel(aes(label = Freq), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+```
+由上图可见：A-SOUL最多每周直播14次，最少每周直播0次。  
+以直播开始时所在日期记为直播所在日，总直播次数对时间（月）的折线图如下：
+```{r}
+# Create a new column 'week' that groups the dates by week
+data$Month <- cut(data$Date, breaks = "month")
+
+# Create a summary data frame with the count of rows for each week
+month_summary <- data.frame(table(data$Month))
+
+# Create the line chart using ggplot2
+ggplot(month_summary, aes(x=Var1, y=Freq, group=1)) +
+  geom_line() +
+  ggtitle("直播次数/月折线图") +
+  xlab("每月第一天日期") +
+  ylab("直播次数")+
+  geom_text_repel(aes(label = Freq), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+```
+由上图可见，在完整的月内，A-SOUL最多每月直播33次，除去不完整的20年12月和22年5月，以及过年的22年2月，其余月份内A-SOUL每月约有20-30次直播。
+## 1.1.9 成员参与直播次数对时间的分析
+成员参与直播次数按周计：
+```{r}
+# 按周计算直播次数
+week_count_member <- rbind(
+  data[Ava,] %>%
+  group_by(Week, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Week, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Week, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Week, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Week, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "乃琳")
+  )
+ggplot(week_count_member, aes(x = Week, y = Count, group = Member, color = Member)) + 
+  geom_point() +
+  geom_line() +
+  labs(x = "每周第一天日期", y = "直播次数")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))
+```
+
+成员参与直播次数按月计：
+```{r}
+# 按月计算直播次数
+month_count_member <- rbind(
+  data[Ava,] %>%
+  group_by(Month, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Month, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Month, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Month, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Month, .drop = FALSE) %>%
+  summarise(Count = n()) %>%
+    mutate(Member = "乃琳")
+  )
+month_count_member$Month <- format(as.Date(month_count_member$Month), "%Y-%m")
+ggplot(month_count_member, aes(x = Month, y = Count, group = Member, color = Member)) + 
+  geom_point() +
+  geom_line() +
+  labs(x = "", y = "直播次数")+
+  geom_text_repel(aes(label = Count), size=3)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))
+```
+
+# 1.2 直播时长分析
+## 
 
