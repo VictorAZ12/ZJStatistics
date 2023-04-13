@@ -1,0 +1,82 @@
+---
+title: "对A-SOUL510前直播次数、时长与营收的分析"
+output: html_notebook
+author: 顶碗人在这里
+---
+
+<style type="text/css">
+/* First-level headers */
+h1 {
+  font-weight: bold;
+  font-size: 32px;
+  color: #1C3144;
+}
+
+/* Second-level headers */
+h2 {
+  font-weight: bold;
+  font-size: 24px;
+  color: #204060;
+}
+
+/* Third-level headers */
+h3 {
+  font-weight: bold;
+  font-size: 18px;
+  color: #2B547E;
+}
+
+/* Fourth-level headers */
+h4 {
+  font-weight: bold;
+  font-size: 16px;
+  color: #376996;
+}
+
+/* Fifth-level headers */
+h5 {
+  font-size: 14px;
+  color: #3D8EB9;
+}
+
+/* Sixth-level headers */
+h6 {
+  font-size: 12px;
+  color: #81B7D3;
+}
+</style>
+# 0. 准备工作
+## 导入所需包
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+```
+## 数据导入
+从csv文件读入数据，存入一data frame内
+```{r}
+# Clear environment
+rm(list = ls())
+# Set working directory
+directory <- "D:/A-SOUL/ZJStatistics/ZJStatistics/stream/"
+fileName <- "stream_to510.csv"
+# Import data
+data <- read.csv(file = paste(directory, fileName, sep=''), header = TRUE, sep = ",", quote = "\"")
+summary(data)
+```
+## 数据清理
+将直播数据缺失的行去掉
+```{r}
+# Remove all lines containing NA
+data = na.omit(data)
+```
+## 数据格式处理
+将包含有日期与时间的一列转为POSIXct格式
+```{r}
+data$Date <- parse_date_time2(data$Date, "Ymd", tz="PRC")
+data$StartTime <- parse_date_time2(data$StartTime, "Ymd HMS", tz="PRC")
+data$EndTime <- parse_date_time2(data$EndTime, "Ymd HMS", tz="PRC")
+```
+
+
+
