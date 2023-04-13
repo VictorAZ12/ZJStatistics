@@ -9,31 +9,15 @@
 ### 数据收集与存储 Data collection and storage
 #### 数据存储：文件格式
 目前暂定使用csv文件存储数据，便于使用各种数据分析工具读取，如Python, R, Julia, Matlib。
-#### 数据收集：变量与类型
-stream_*.csv记录直播和视频数据，\*代表记录区间，每一行可有以下列：  
-1. 时间 (time)：格式为yyyy-mm-dd，如2022-01-01
-2. 标题(title): 该内容的标题。格式为：平台+日期+文字标题，若无标题存留则不写标题。例如：B站2022/01/31【原创音乐】《除夕》A-SOUL全新团曲MV【2022拜年纪单品】
-3. 类型 (type)：两位字符，平台加类型。平台位为b（bilibili），d（抖音），x（其他平台），类型位为s（直播），v（视频）
-4. 时长 (length)：单位为秒。视频取视频长度，直播取推流时长，因上播前准备和下播后收拾和可能的回马枪都应包括在工作时间内。(可酌情修改为开始时间/结束时间)  
-5. 成员 (member)：“直接参与”了该内容的成员，使用字母表示参与和未参与。如某次团播有贝拉、嘉然、乃琳三人出镜，同时有电话连线向晚的环节，这种情况应填写BDE，除非连线时间占到本次直播时间的1/2以上。再如假设某次抖音短视频为全手绘动画，有向晚、贝拉、嘉然、乃琳出镜，但只有向晚、乃琳的声音，这种情况下应填写AE。假如某次视频有不能判断演员的羊驼出场，则记为X（阿草 hips matter!)
-6. 歌曲数量(nSong)：分为五列，表示成员该内容中演唱歌曲的数量。哼唱、随口唱不计入内。
-7. 歌曲长度(lenDance)：分为五列，表示成员该内容中演唱歌曲的总长度，以实际演唱长度为准，包括前奏和间奏，不包括未演唱部分。
-8. 舞蹈数量(nDance)：分为五列，表示成员该内容中表演舞蹈的数量。n连跳、舞蹈剧按不同舞蹈支数计。扒舞、舞力全开不计入。
-9. 舞蹈数量(lenDance)：分为五列，表示成员该内容中表演舞蹈的时长。以实际跳舞长度为准。
-10. 源(source)：该内容首次发布使用的成员账号，XABCDE分别表示官号、向晚、贝拉、珈乐、嘉然、乃琳。如某视频为六个账号联合投稿，则记为XABCDE。
-11. 链接(link)：创建该行时所使用的的源地址/链接
-12. 其他(other)：记录其他重要信息，或留下该行数据创建者的评论 
-13. 创建者(creator)：该行数据创建者的B站uid等数据，如uid:3510653  
 
-**csv header:**  
-time,title,type,length,member,nSongA,lenSongA,nDanceA,lenDanceA,nSongB,lenSongB,nDanceB,lenDanceB,nSongC,lenSongC,nDanceC,lenDanceC,nSongD,lenSongD,nDanceD,lenDanceD,nSongE,lenSongE,nDanceE,lenDanceE,source,link,other,creator  
-**单行示例数据 (附列名称）：**  
-
-|time|title|type|length|member|nSongA|lenSongA|nDanceA|lenDanceA|nSongB|lenSongB|nDanceB|lenDanceB|nSongC|lenSongC|nDanceC|lenDanceC|nSongD|lenSongD|nDanceD|lenDanceD|nSongE|lenSongE|nDanceE|lenDanceE|source|link|other|creator|  
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|  
-|2000-01-01|Test|xv|114514|XABCE|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|XABCE|www.bilibili.com/||uid:3510653|  
 ### 数据分析与可视化 Data analysis and visualisation
+位于analysis folder内
 ### 数据发布 
-## 可能有用的一些链接
-[奶粉的录播站](https://rec.koifish.fans/)  
+目前可用的数据有三个csv文件：
+- /calendar/calendar_raw.csv统计了出道至2023年3月20日左右的直播标题与时间  
+- /calendar/calendar_minimal_members_to510.csv统计了截止至2022年5月10日的直播标题、参与成员与时间
+- /stream/stream_to510.csv统计了截止至2022年5月10日的直播标题、时间、参与成员、推流起始时间、推流解释时间、营收  
+  
+除此以外，A-SOUL_Official的全部动态信息存储在/dynamics/result.json内，也可以直接使用dynamics_display.html查看
+
 
