@@ -115,6 +115,10 @@ print(paste0("总共有", length(member_combo), "种成员组合"))
 总共有28种不同的成员直播组合。经查验，从未出现的3种直播成员组合为："乃琳,珈乐,贝拉"(大三角), "向晚,珈乐,贝拉", "乃琳,向晚,珈乐,贝拉"。
 
 ### 1.1.1 全部组合直播次数分析
+```{r}
+print(paste0("本数据集中共统计了", nrow(data), "次直播"))
+```
+
 对组合直播次数进行分析，此图表中单人名字为单人单播。
 ```{r}
 # Create a summary data frame with the count of rows for each unique value in the 'Member' column
@@ -223,7 +227,7 @@ ggplot(member_participate, aes(x=Member, y=Participate_Count)) +
   coord_flip()
 ```
 五位成员参与直播的次数由多到少为嘉然、向晚、乃琳、贝拉、珈乐，其中珈乐参与直播次数与其他成员相差较大。
-## 1.1.8 直播次数对时间的分析
+### 1.1.8 直播次数对时间的分析
 以直播开始时所在日期记为直播所在日，总直播次数对时间（周）的折线图如下：
 ```{r}
 # Create a new column 'week' that groups the dates by week
@@ -260,7 +264,7 @@ ggplot(month_summary, aes(x=Var1, y=Freq, group=1)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
 ```
 由上图可见，在完整的月内，A-SOUL最多每月直播33次，除去不完整的20年12月和22年5月，以及过年的22年2月，其余月份内A-SOUL每月约有20-30次直播。
-## 1.1.9 成员参与直播次数对时间的分析
+### 1.1.9 成员参与直播次数对时间的分析
 成员参与直播次数按周计：
 ```{r}
 # 按周计算直播次数
@@ -329,6 +333,691 @@ ggplot(month_count_member, aes(x = Month, y = Count, group = Member, color = Mem
   scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))
 ```
 
-# 1.2 直播时长分析
-## 
+## 1.2 直播时长分析
+```{r}
+print(paste0("本数据集中的直播时长总共为", round(sum(as.numeric(data$Duration))/60, digits=2), "分钟，即", round(sum(as.numeric(data$Duration))/3600, digits=2), "小时。"))
+```
 
+### 1.2.1 不同组合直播时长分析
+按照Member中不同组合，对直播时长进行求和：
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration'
+duration_summary <- data %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary, aes(x=Member, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("总直播时长") +
+  xlab("成员组合") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+经观察，五人团播时长最长，其分布也大致与直播次数排列相符。排名前列的成员组合中，与成员组合直播次数统计不同的是：四人团播的直播次数少于珈乐单播的直播次数，但直播时长多于珈乐单播的直播时长。
+### 1.2.2 不同人数组合直播时长分析
+按照直播出场人数，对直播时长进行求和
+```{r}
+# Group the data by 'Member_num' and calculate the sum of 'Duration' 
+duration_summary_num <- data %>%
+  group_by(Member_num) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member_num = reorder(Member_num, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary_num, aes(x=Member_num, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("不同人数组合总直播时长") +
+  xlab("人数") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+从上图可知，五位成员单播的总时长最多，为18654.1分钟；五人团播次之，为13261.18分钟。双播、四人团播和三人团播之和大致相近。  
+### 1.2.3 四人团播直播时长分析
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' when Member_num is 4
+duration_summary4 <- data[data$Member_num == 4,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary4, aes(x=Member, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("四人团播总直播时长") +
+  xlab("四人团播成员组合") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+
+```
+四人团播时长与四人团播次数排序一致。
+### 1.2.4 三人团播直播时长分析
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' when Member_num is 3
+duration_summary3 <- data[data$Member_num == 3,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary3, aes(x=Member, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("三人团播总直播时长") +
+  xlab("三人团播成员组合") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+
+```
+三人团播时长与三人团播直播次数排序大致相同，不同之处在于直播次数相同的组合在直播时长上仍然会有细微的差别。  
+### 1.2.5 双播时长分析
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' when Member_num is 2
+duration_summary2 <- data[data$Member_num == 2,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary2, aes(x=Member, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("双播总直播时长") +
+  xlab("双播成员组合") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+双播直播时长与双播次数排序大致相同。不同之处：果丹皮直播次数比乃贝少一次，但总直播时长略多于乃贝。超级嘉贝和珈特琳的直播次数均为2次，而直播时长相差较大。（笔者注：经调查发现嘉贝的2次双播为21年早期，彼时双播还是2小时，并非数据错误）
+### 1.2.6 单播时长分析
+```{r}
+
+# Group the data by 'Member' and calculate the sum of 'Duration' when Member_num is 1
+duration_summary1 <- data[data$Member_num == 1,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Duration=round(sum(as.numeric(Duration))/60, digits=2)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Duration))
+# Create the bar chart using ggplot2
+ggplot(duration_summary1, aes(x=Member, y=Duration)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("单播总直播时长") +
+  xlab("单播") +
+  ylab("直播时长(分钟)") +
+  geom_text(aes(label=Duration), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+单播时长与单播次数相同的在于：第一和第四第五分别为嘉然、向晚、珈乐。而贝拉相比乃琳单播次数较多，但单播时长较短。
+### 1.2.7 成员参与直播时长分析
+```{r}
+member_participate_duration <- c(round(sum(as.numeric(data$Duration[Ava]))/60, digits=2),
+                                 round(sum(as.numeric(data$Duration[Bella]))/60, digits=2),
+                                 round(sum(as.numeric(data$Duration[Carol]))/60, digits=2),
+                                 round(sum(as.numeric(data$Duration[Diana]))/60, digits=2),
+                                 round(sum(as.numeric(data$Duration[Eileen]))/60, digits=2))
+member_participate_duration <- data.frame(member_participate_duration, c("向晚", "贝拉", "珈乐", "嘉然","乃琳"))
+colnames(member_participate_duration) <- c("Participate_Duration", "Member")
+# sort by count
+member_participate_duration$Member <- factor(member_participate_duration$Member,
+                                               levels = member_participate_duration$Member[order(member_participate_duration$Participate_Duration, decreasing = FALSE)])
+ggplot(member_participate_duration, aes(x=Member, y=Participate_Duration, fill = Member)) +
+  geom_bar(stat="identity", width=0.5, alpha = 0.5) +
+  ggtitle("成员参与直播时长") +
+  xlab("成员") +
+  ylab("参与直播时长(分钟)") +
+  geom_text(aes(label=Participate_Duration), vjust=0.2, hjust = 2, color="yellow", size=5) + 
+  coord_flip() + 
+  scale_fill_manual(values=c("purple", 
+                              "red",
+                              "snow4",
+                              "steelblue1",
+                              "palevioletred1"))
+
+```
+参与直播时长排序与参与直播次数排序完全一致。参与直播最少的成员与参与直播最多的成员直播时长之差大约是一万分钟。
+### 1.2.8 企划直播时长对时间图表
+按周分析
+```{r}
+week_duration_all <- 
+  data %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2))
+
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(week_duration_all, aes(x=Week, y=Duration, group=1)) +
+  geom_line() +
+  ggtitle("企划直播时长/周折线图") +
+  xlab("周一日期") +
+  ylab("直播时长(分钟)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+
+```
+按月分析
+```{r}
+month_duration_all <- 
+  data %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2))
+month_duration_all$Month <- format(as.Date(month_duration_all$Month), "%Y-%m")
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(month_duration_all, aes(x=Month, y=Duration, group=1)) +
+  geom_line() +
+  ggtitle("企划直播时长/月折线图") +
+  xlab("") +
+  ylab("直播时长(分钟)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+
+```
+
+### 1.2.9 成员参与直播时长对时间图表
+按周分析
+```{r}
+# count the sum of all duration grouped by week
+week_duration_member <- rbind(
+  data[Ava,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "乃琳")
+  )
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(week_duration_member, aes(x=Week, y=Duration, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("参与直播时长/周折线图") +
+  xlab("周一日期") +
+  ylab("直播时长(分钟)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6)) +
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))
+```
+图表有点乱，换成按月算  
+按月分析
+```{r}
+# count the sum of all duration grouped by month
+month_duration_member <- rbind(
+  data[Ava,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Duration = round(sum(as.numeric(Duration))/60, digits=2)) %>%
+    mutate(Member = "乃琳")
+  )
+month_duration_member$Month <- format(as.Date(month_duration_member$Month), "%Y-%m")
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(month_duration_member, aes(x=Month, y=Duration, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("参与直播时长/月折线图") +
+  xlab("") +
+  ylab("直播时长(分钟)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6)) +
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))
+```
+### 1.2.10 企划直播时长累积折线图(Cumulative Line Graph)
+```{r}
+ggplot(data, aes(Date, round(cumsum(as.numeric(Duration))/60, digits=2))) + 
+  geom_line(size = 0.5, alpha = 0.8) + 
+  ggtitle("企划直播时长累积折线图") +
+  xlab("") +
+  ylab("直播时长(分钟)")+
+  scale_x_datetime(date_breaks = "1 month", date_labels = "%Y-%m")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+```
+相较于每周/每月直播时长的折线图，A-SOUL企划的总直播时间对时间的累积折线图在整体的尺度，虽然偶有波折，但近似一条直线，这代表A-SOUL的直播内容输出相对稳定。
+### 1.2.11 个人参与直播时长累积折线图
+```{r}
+cummulative_duration_members <- rbind(
+  data.frame(round(cumsum(as.numeric(data$Duration[Ava]))/60, digits=2), 
+        data$Date[Ava], 
+        "向晚") %>% 
+    rename_with(~ c("Duration","Date","Member"), 1:3),
+  data.frame(round(cumsum(as.numeric(data$Duration[Bella]))/60, digits=2), 
+        data$Date[Bella], 
+        "贝拉") %>% 
+    rename_with(~ c("Duration","Date","Member"), 1:3),
+  data.frame(round(cumsum(as.numeric(data$Duration[Carol]))/60, digits=2), 
+        data$Date[Carol], 
+        "珈乐") %>% 
+    rename_with(~ c("Duration","Date","Member"), 1:3),
+  data.frame(round(cumsum(as.numeric(data$Duration[Diana]))/60, digits=2), 
+        data$Date[Diana], 
+        "嘉然") %>% 
+    rename_with(~ c("Duration","Date","Member"), 1:3),
+  data.frame(round(cumsum(as.numeric(data$Duration[Eileen]))/60, digits=2), 
+        data$Date[Eileen], 
+        "乃琳") %>% 
+    rename_with(~ c("Duration","Date","Member"), 1:3)
+  ) 
+```
+```{r}
+ggplot(cummulative_duration_members, aes(x=Date, y=Duration, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("成员参与直播时长累积折线图") +
+  xlab("") +
+  ylab("直播时长(分钟)")+
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))+
+  scale_x_datetime(date_breaks = "1 month", date_labels = "%Y-%m")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+  
+```
+## 1.3 营收分析
+### 1.3.1 全部组合营收分析
+按照Member中不同组合，对直播营收进行求和：
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Revenue'
+revenue_summary <- data %>%
+  group_by(Member) %>%
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary, aes(x=Member, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("总直播营收") +
+  xlab("成员组合") +
+  ylab("直播营收(元)") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+在所有组合中，五人团播营收占绝对多数，约为893.47万元；四人出场的直播营收其次，约为211.92万元，随后分别是嘉然、贝拉、乃琳、珈乐和向晚的单播总营收。前7的组合与直播次数、时长一致，而顺序上存在差异。  
+### 1.3.2 不同人数组合直播营收分析
+按照出场人数对营收进行求和
+```{r}
+# Group the data by 'Member_num' and calculate the sum of 'Duration' 
+revenue_summary_num <- data %>%
+  group_by(Member_num) %>%
+  # precision: 2 decimal places
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member_num = reorder(Member_num, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary_num, aes(x=Member_num, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("不同人数组合总营收") +
+  xlab("人数") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+由上图可看出，5人团播营收依然占多数，单播营收之和约为616.11万，排第二。四人团播营收约为232.83万，排第三。双播和三播分别约是74.07万和59.22万。  
+### 1.3.3 四人团播营收分析
+选取出场人数=4对营收进行求和
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' 
+revenue_summary_num4 <- data[data$Member_num==4,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary_num4, aes(x=Member, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("四人团播总营收") +
+  xlab("组合") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+四人团播中缺少珈乐的组合总营收约为211.92万元，占绝对多数。其余三个组合分别是缺少向晚、缺少贝拉和缺少乃琳的组合，总营收在6.7-7.1万左右。  
+### 1.3.3 三人团播营收分析
+选取出场人数=3对营收进行求和
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' 
+revenue_summary_num3 <- data[data$Member_num==3,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary_num3, aes(x=Member, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("三人团播总营收") +
+  xlab("组合") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+三人团播总营收情况见上图
+### 1.3.4 双播营收分析
+选取出场人数=2对营收进行求和
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' 
+revenue_summary_num2 <- data[data$Member_num==2,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary_num2, aes(x=Member, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("双播总营收") +
+  xlab("组合") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()
+```
+双播总营收前三分别是乃贝、嘉晚饭和果丹皮，分别约是22.4万、20.2万和14.6万。其余组合营收均少于5万。
+### 1.3.5 单播营收分析
+选取出场人数=1对营收进行求和
+```{r}
+# Group the data by 'Member' and calculate the sum of 'Duration' 
+revenue_summary_num1 <- data[data$Member_num==1,] %>%
+  group_by(Member) %>%
+  # precision: 2 decimal places
+  summarise(Revenue=sum(Revenue)) %>%
+  ungroup() %>%
+  mutate(Member = reorder(Member, Revenue))
+# Create the bar chart using ggplot2
+ggplot(revenue_summary_num1, aes(x=Member, y=Revenue)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("单播总营收") +
+  xlab("组合") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue), color="red", hjust = 0.6, size=3) + 
+  coord_flip()+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+单播总营收由高到低排名为嘉然、贝拉、乃琳、珈乐、向晚，分别约为140.47万、126.21万、125万、119.18万、105.24万。  
+### 1.3.6 成员个人营收能力分析
+成员的个人营收将使用直播营收/直播参与人数来判断。如A-SOUL小剧场 第二期 陪你过圣诞~
+2020-12-25 乃琳, 向晚, 嘉然, 珈乐, 贝拉的营收是2177.9，那么则判断本场直播中五人的营收为435.58。  
+在实际情况中，有的SC、舰长、礼物是打给个人的，有的是打给团体的，无法对每场多人直播的营收按实际情况进行分配。  
+一种具有可行性的方案是：通过统计多人直播时粉丝数之比、多人直播前参与直播的乘员的数场单播营收和之比。来对均分后的个人营收进行加权。此方案仍然需要投入大量时间和人力，将列为以后可能的一种统计方式。  
+采用均分计算每场直播的个人营收
+```{r}
+for (i in 1:nrow(data)){
+  data$Revenue_A[i] <- if(Ava[i]) data$Revenue[i]/data$Member_num[i] else 0
+  data$Revenue_B[i] <- if(Bella[i]) data$Revenue[i]/data$Member_num[i] else 0
+  data$Revenue_C[i] <- if(Carol[i]) data$Revenue[i]/data$Member_num[i] else 0
+  data$Revenue_D[i] <- if(Diana[i]) data$Revenue[i]/data$Member_num[i] else 0
+  data$Revenue_E[i] <- if(Eileen[i]) data$Revenue[i]/data$Member_num[i] else 0
+}
+```
+#### 1.3.6.1 成员个人营收总和
+```{r}
+Revenue_summary_member <- data.frame(
+    c(sum(data$Revenue_A),
+      sum(data$Revenue_B),
+      sum(data$Revenue_C),
+      sum(data$Revenue_D),
+      sum(data$Revenue_E)
+      ),
+    c("向晚","贝拉","珈乐","嘉然","乃琳"))
+colnames(Revenue_summary_member) <- c("Revenue_sum", "Member")
+Revenue_summary_member <- Revenue_summary_member  %>%
+  mutate(Member = reorder(Member, Revenue_sum))
+ggplot(Revenue_summary_member, aes(x=Member, y=Revenue_sum)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("成员总营收") +
+  xlab("成员") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue_sum), color="red", hjust = 0.6, size=3) + 
+  coord_flip()+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+#### 1.3.6.2 成员场均营收
+```{r}
+Revenue_per_stream_member <- data.frame(
+    c(sum(data$Revenue_A)/table(Ava)["TRUE"],
+      sum(data$Revenue_B)/table(Bella)["TRUE"],
+      sum(data$Revenue_C)/table(Carol)["TRUE"],
+      sum(data$Revenue_D)/table(Diana)["TRUE"],
+      sum(data$Revenue_E)/table(Eileen)["TRUE"]
+      ),
+    c("向晚","贝拉","珈乐","嘉然","乃琳"))
+colnames(Revenue_per_stream_member) <- c("Revenue_per_stream", "Member")
+Revenue_per_stream_member <- Revenue_per_stream_member  %>%
+  mutate(Member = reorder(Member, Revenue_per_stream))
+```
+```{r}
+ggplot(Revenue_per_stream_member, aes(x=Member, y=Revenue_per_stream)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("成员场均营收") +
+  xlab("成员") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue_per_stream), color="red", hjust = 0.6, size=3) + 
+  coord_flip()+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+#### 1.3.6.3 成员时均营收
+```{r}
+Revenue_per_hour_member <- data.frame(
+    c(sum(data$Revenue_A)/sum(as.numeric(data$Duration[Ava])/3600),
+      sum(data$Revenue_B)/sum(as.numeric(data$Duration[Bella])/3600),
+      sum(data$Revenue_C)/sum(as.numeric(data$Duration[Carol])/3600),
+      sum(data$Revenue_D)/sum(as.numeric(data$Duration[Diana])/3600),
+      sum(data$Revenue_E)/sum(as.numeric(data$Duration[Eileen])/3600)
+      ),
+    c("向晚","贝拉","珈乐","嘉然","乃琳"))
+colnames(Revenue_per_hour_member) <- c("Revenue_per_hour", "Member")
+Revenue_per_hour_member <- Revenue_per_hour_member  %>%
+  mutate(Member = reorder(Member, Revenue_per_hour))
+```
+```{r}
+ggplot(Revenue_per_hour_member, aes(x=Member, y=Revenue_per_hour)) +
+  geom_bar(stat="identity", fill = "brown1", alpha = 0.5) +
+  ggtitle("成员时均营收") +
+  xlab("成员") +
+  ylab("直播营收（元）") +
+  geom_text(aes(label=Revenue_per_hour), color="red", hjust = 0.6, size=3) + 
+  coord_flip()+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+#### 1.3.6.4 成员营收对时间图表
+按周分析
+```{r}
+# count the sum of all duration grouped by week
+week_revenue_member <- rbind(
+  data[Ava,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_A)) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_B)) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_C)) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_D)) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_E)) %>%
+    mutate(Member = "乃琳")
+  )
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(week_revenue_member, aes(x=Week, y=Revenue, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("直播营收/周折线图") +
+  xlab("周一日期") +
+  ylab("直播营收(元)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6)) +
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red")) + 
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+按月分析
+```{r}
+# count the sum of all duration grouped by week
+month_revenue_member <- rbind(
+  data[Ava,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_A)) %>%
+    mutate(Member = "向晚"),
+  data[Bella,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_B)) %>%
+    mutate(Member = "贝拉"),
+  data[Carol,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_C)) %>%
+    mutate(Member = "珈乐"),
+  data[Diana,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_D)) %>%
+    mutate(Member = "嘉然"),
+  data[Eileen,] %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue_E)) %>%
+    mutate(Member = "乃琳")
+  )
+month_revenue_member$Month <- format(as.Date(month_revenue_member$Month), "%Y-%m")
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(month_revenue_member, aes(x=Month, y=Revenue, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("直播营收/月折线图") +
+  xlab("周一日期") +
+  ylab("直播营收(元)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6)) +
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red")) + 
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
+#### 1.3.6.5 成员营收累积折线图
+```{r}
+cummulative_revenue_members <- rbind(
+  data.frame(cumsum(data$Revenue_A[Ava]), 
+        data$Date[Ava], 
+        "向晚") %>% 
+    rename_with(~ c("Revenue","Date","Member"), 1:3),
+  data.frame(cumsum(data$Revenue_B[Bella]), 
+        data$Date[Bella], 
+        "贝拉") %>% 
+    rename_with(~ c("Revenue","Date","Member"), 1:3),
+  data.frame(cumsum(data$Revenue_C[Carol]), 
+        data$Date[Carol], 
+        "珈乐") %>% 
+    rename_with(~ c("Revenue","Date","Member"), 1:3),
+  data.frame(cumsum(data$Revenue_D[Diana]), 
+        data$Date[Diana], 
+        "嘉然") %>% 
+    rename_with(~ c("Revenue","Date","Member"), 1:3),
+  data.frame(cumsum(data$Revenue_E[Eileen]), 
+        data$Date[Eileen], 
+        "乃琳") %>% 
+    rename_with(~ c("Revenue","Date","Member"), 1:3)
+  ) 
+```
+```{r}
+ggplot(cummulative_revenue_members, aes(x=Date, y=Revenue, group=Member, color=Member)) +
+  geom_line(size=1, alpha = 0.6) +
+  ggtitle("成员个人营收累积折线图") +
+  xlab("") +
+  ylab("营收(元)")+
+  scale_color_manual(name = "成员", values = c("snow4", "steelblue1", "palevioletred1", "purple", "red"))+
+  scale_x_datetime(date_breaks = "1 month", date_labels = "%Y-%m")+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+  
+```
+### 1.3.7 企划营收对时间图表
+按周分析
+```{r}
+week_revenue_all <- 
+  data %>%
+  group_by(Week,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue))
+
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(week_revenue_all, aes(x=Week, y=Revenue, group=1)) +
+  geom_line() +
+  ggtitle("企划直播营收/周折线图") +
+  xlab("周一日期") +
+  ylab("营收(元)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+
+```
+按月分析
+```{r}
+month_revenue_all <- 
+  data %>%
+  group_by(Month,.drop = FALSE) %>%
+  summarise(Revenue = sum(Revenue))
+month_revenue_all$Month <- format(as.Date(month_revenue_all$Month), "%Y-%m")
+```
+```{r}
+# Create the line chart using ggplot2
+ggplot(month_revenue_all, aes(x=Month, y=Revenue, group=1)) +
+  geom_line() +
+  ggtitle("企划直播营收/月折线图") +
+  xlab("") +
+  ylab("营收(元)")+
+  # geom_text_repel(aes(label = Duration), size=2.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))
+
+```
+
+
+### 1.3.8 企划营收累积折线图
+```{r}
+ggplot(data, aes(Date, cumsum(Revenue))) + 
+  geom_line(size = 0.5, alpha = 0.8) + 
+  ggtitle("企划直播营收累积折线图") +
+  xlab("") +
+  ylab("直播营收(元)")+
+  scale_x_datetime(date_breaks = "1 month", date_labels = "%Y-%m")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=6))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+```
